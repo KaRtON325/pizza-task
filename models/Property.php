@@ -5,25 +5,23 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "{{%users}}".
+ * This is the model class for table "{{%properties}}".
  *
  * @property int $id
- * @property string $login
- * @property string $password_hash
- * @property string $email
+ * @property string $name
  * @property int $created_at
  * @property int $updated_at
  *
- * @property Order[] $orders
+ * @property ProductProperty[] $productProperties
  */
-class User extends \yii\db\ActiveRecord
+class Property extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return '{{%users}}';
+        return '{{%properties}}';
     }
 
     /**
@@ -32,9 +30,9 @@ class User extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['login', 'password_hash', 'email', 'created_at', 'updated_at'], 'required'],
+            [['name', 'created_at', 'updated_at'], 'required'],
             [['created_at', 'updated_at'], 'integer'],
-            [['login', 'password_hash', 'email'], 'string', 'max' => 255],
+            [['name'], 'string', 'max' => 255],
         ];
     }
 
@@ -45,21 +43,19 @@ class User extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'login' => Yii::t('app', 'Login'),
-            'password_hash' => Yii::t('app', 'Password Hash'),
-            'email' => Yii::t('app', 'Email'),
+            'name' => Yii::t('app', 'Name'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
     }
 
     /**
-     * Gets query for [[Orders]].
+     * Gets query for [[ProductProperties]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getOrders()
+    public function getProductProperties()
     {
-        return $this->hasMany(Order::class, ['user_id' => 'id']);
+        return $this->hasMany(ProductProperty::class, ['property_id' => 'id']);
     }
 }
