@@ -2,14 +2,22 @@
 
 namespace app\controllers;
 
+use app\models\SignupForm;
 use Yii;
-use yii\web\Controller;
-use yii\web\Response;
+use yii\filters\auth\HttpBearerAuth;
+use yii\rest\Controller;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 
 class ApiController extends Controller
 {
+    /**
+     * Disables CSRF validation
+     *
+     * @var bool $enableCsrfValidation
+     */
+    public $enableCsrfValidation = false;
+
     /**
      * {@inheritdoc}
      */
@@ -22,6 +30,9 @@ class ApiController extends Controller
                     'login' => ['post'],
                 ],
             ],
+            'authenticator' => [
+                'class' => HttpBearerAuth::class,
+            ]
         ];
     }
 
@@ -35,26 +46,32 @@ class ApiController extends Controller
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function afterAction($action, $result)
-    {
-        $result = parent::afterAction($action, $result);
-        $result['token'] = \Yii::$app->request->csrfToken;
-        return $result;
-    }
-
-
-    /**
      * Login action.
      *
-     * @return Response|string
+     * @return array
      */
     public function actionLogin()
     {
         $model = new LoginForm();
         $model->load(Yii::$app->request->post(), '');
         if ($model->login()) {
+            return ['result' => 'success', 'user_id' => Yii::$app->user->getId()];
+        } else {
+            return ['result' => 'error', 'messages' => $model->getFirstErrors()];
+        }
+    }
+
+    /**
+     * Login action.
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function actionSignup()
+    {
+        $model = new SignupForm();
+        $model->load(Yii::$app->request->post(), '');
+        if ($model->signup()) {
             return ['result' => 'success', 'user_id' => Yii::$app->user->getId()];
         } else {
             return ['result' => 'error', 'messages' => $model->getFirstErrors()];

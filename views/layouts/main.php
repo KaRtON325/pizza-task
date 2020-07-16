@@ -40,6 +40,9 @@ AppAsset::register($this);
                             <router-link to="/">Home</router-link>
                         </li>
                         <li :class="{'active' : isActiveMenu('/about')}">
+                            <router-link to="/about">Menu</router-link>
+                        </li>
+                        <li :class="{'active' : isActiveMenu('/about')}">
                             <router-link to="/about">About</router-link>
                         </li>
                         <li :class="{'active' : isActiveMenu('/login')}">

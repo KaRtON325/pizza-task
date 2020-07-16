@@ -14,7 +14,7 @@ $config = [
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'Xr-feRM1WVhtXUXcPZ78PkoS86yH8-0R',
+            'enableCookieValidation' => FALSE,
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
             ]
@@ -23,8 +23,11 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
-            'enableAutoLogin' => true,
+            'identityClass' => 'yii\web\IdentityInterface::findIdentityByAccessToken()',
+            //'identityClass' => 'app\models\User',
+            //'enableAutoLogin' => true,
+            'enableSession' => false,
+            'loginUrl' => null,
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -46,14 +49,12 @@ $config = [
             ],
         ],
         'db' => $db,
-
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                '<controller:(about|login)>' => 'site/index',
-                '<controller:(\w|-)+>/' => '<controller>/index',
-                '<controller:\w+>/<action:(\w|-)+>/<id:\d+>' => '<controller>/<action>',
+                '<controller:(\w|-)+>/' => 'site/index',
+                '<controller:\w+>/<action:(\w|-)+>/<id:\d+>' => 'site/index',
                 '<module:\w+>/<controller:\w+>/<action:(\w|-)+>' => '<module>/<controller>/<action>',
                 '<controller:\w+>/<action:(\w|-)+>' => '<controller>/<action>'
             ],

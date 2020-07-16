@@ -3,10 +3,9 @@
 
         <div class="jumbotron">
             <h1>Congratulations!</h1>
-
+1wscf
             <p class="lead">You have successfully created your Yii-powered application.</p>
-
-            <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
+            <router-link to="/signup" class="btn btn-lg btn-success">Get started with Yii</router-link>
         </div>
 
         <div class="body-content">

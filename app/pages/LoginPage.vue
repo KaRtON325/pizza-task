@@ -89,7 +89,6 @@
                             rememberMe: this.remember_me
                         }
                     }).then((response) => {
-                        this.refreshCSRFToken(response.data.token);
                         if (response.data.result == 'success') {
                             this.is_logged_in = true;
                             this.current_user = response.data.user_id;
@@ -103,9 +102,6 @@
                         }
                 })
                 }
-            },
-            refreshCSRFToken(token) {
-                window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token;
             }
         }
     }

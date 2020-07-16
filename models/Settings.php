@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "{{%settings}}".
@@ -29,9 +30,20 @@ class Settings extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'name', 'value', 'created_at', 'updated_at'], 'required'],
+            [['id', 'name', 'value'], 'required'],
             [['id', 'created_at', 'updated_at'], 'integer'],
             [['name', 'value'], 'string', 'max' => 255],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors() {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::class,
+            ],
         ];
     }
 

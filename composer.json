@@ -15,7 +15,8 @@
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0",
         "purrweb/yii2-heroku": "*",
-        "bizley/migration": "dev-master"
+        "bizley/migration": "dev-master",
+        "lars-t/yii2-vuejs-frontend": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

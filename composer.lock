@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "34f7aa7eda5b52fc024f7be6c046b72b",
+    "content-hash": "c38f3163574c8a3608a4ae4b181fddf9",
     "packages": [
         {
             "name": "bizley/migration",
@@ -63,6 +63,24 @@
                 }
             ],
             "time": "2020-07-13T12:08:18+00:00"
+        },
+        {
+            "name": "bower-asset/axios",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:mzabriskie/axios.git",
+                "reference": "16aa2ce7fa42e7c46407b78966b7521d8e588a72"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mzabriskie/axios/zipball/16aa2ce7fa42e7c46407b78966b7521d8e588a72",
+                "reference": "16aa2ce7fa42e7c46407b78966b7521d8e588a72"
+            },
+            "type": "bower-asset",
+            "license": [
+                "MIT"
+            ]
         },
         {
             "name": "bower-asset/bootstrap",
@@ -136,6 +154,39 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/bestiejs/punycode.js/zipball/38c8d3131a82567bfef18da09f7f4db68c84f8a3",
                 "reference": "38c8d3131a82567bfef18da09f7f4db68c84f8a3"
+            },
+            "type": "bower-asset"
+        },
+        {
+            "name": "bower-asset/toastr",
+            "version": "2.1.2",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:johnpapa/toastr-bower.git",
+                "reference": "e648a870a60103bbc3986c1fe2b2de86ea4a9569"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/johnpapa/toastr-bower/zipball/e648a870a60103bbc3986c1fe2b2de86ea4a9569",
+                "reference": "e648a870a60103bbc3986c1fe2b2de86ea4a9569"
+            },
+            "require": {
+                "bower-asset/jquery": ">=1.6.3"
+            },
+            "type": "bower-asset"
+        },
+        {
+            "name": "bower-asset/vue",
+            "version": "v2.5.17",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:vuejs/vue.git",
+                "reference": "636c9b4ef17f2062720b677cbbe613f146f4d4db"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vuejs/vue/zipball/636c9b4ef17f2062720b677cbbe613f146f4d4db",
+                "reference": "636c9b4ef17f2062720b677cbbe613f146f4d4db"
             },
             "type": "bower-asset"
         },
@@ -269,6 +320,65 @@
                 "html"
             ],
             "time": "2020-06-29T00:56:53+00:00"
+        },
+        {
+            "name": "lars-t/yii2-vuejs-frontend",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lars-t/yii2-vuejs-frontend.git",
+                "reference": "cfeb1a4c47fba184d083fa2ed6f3eaad08f063e1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lars-t/yii2-vuejs-frontend/zipball/cfeb1a4c47fba184d083fa2ed6f3eaad08f063e1",
+                "reference": "cfeb1a4c47fba184d083fa2ed6f3eaad08f063e1",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/axios": "*",
+                "bower-asset/toastr": "^2.1",
+                "bower-asset/vue": " 2.5.17",
+                "npm-asset/vee-validate": " 2.0.9",
+                "yiisoft/yii2": "~2.0.0"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "larst\\vuefrontend\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "lars-t",
+                    "email": "lars-t@github.com"
+                }
+            ],
+            "description": "Yii2 Vuejs frontend drop-in replacement, no more need for pjax",
+            "keywords": [
+                "extension",
+                "vue",
+                "vuejs",
+                "yii2",
+                "yii2-vuejs"
+            ],
+            "time": "2020-02-07T11:11:45+00:00"
+        },
+        {
+            "name": "npm-asset/vee-validate",
+            "version": "2.0.9",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/vee-validate/-/vee-validate-2.0.9.tgz"
+            },
+            "type": "npm-asset",
+            "license": [
+                "MIT"
+            ]
         },
         {
             "name": "purrweb/yii2-heroku",

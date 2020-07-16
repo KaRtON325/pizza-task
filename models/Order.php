@@ -3,12 +3,14 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "{{%orders}}".
  *
  * @property int $id
  * @property int|null $user_id
+ * @property int|null $currency_id
  * @property string $first_name
  * @property string $last_name
  * @property string $address
@@ -17,6 +19,7 @@ use Yii;
  * @property float $total
  * @property float $delivery_price
  *
+ * @property Currency $currency
  * @property OrderProduct[] $orderProducts
  * @property User $user
  */
@@ -36,11 +39,23 @@ class Order extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id'], 'integer'],
+            [['user_id', 'currency_id', 'created_at', 'updated_at'], 'integer'],
             [['first_name', 'last_name', 'address', 'email', 'phone_number', 'total', 'delivery_price'], 'required'],
             [['total', 'delivery_price'], 'number'],
             [['first_name', 'last_name', 'address', 'email', 'phone_number'], 'string', 'max' => 255],
+            [['currency_id'], 'exist', 'skipOnError' => true, 'targetClass' => Currency::class, 'targetAttribute' => ['currency_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors() {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::class,
+            ],
         ];
     }
 
@@ -52,6 +67,7 @@ class Order extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'user_id' => Yii::t('app', 'User ID'),
+            'currency_id' => Yii::t('app', 'Currency ID'),
             'first_name' => Yii::t('app', 'First Name'),
             'last_name' => Yii::t('app', 'Last Name'),
             'address' => Yii::t('app', 'Address'),
@@ -60,6 +76,16 @@ class Order extends \yii\db\ActiveRecord
             'total' => Yii::t('app', 'Total'),
             'delivery_price' => Yii::t('app', 'Delivery Price'),
         ];
+    }
+
+    /**
+     * Gets query for [[Currency]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCurrency()
+    {
+        return $this->hasOne(Currency::class, ['id' => 'currency_id']);
     }
 
     /**

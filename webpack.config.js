@@ -6,6 +6,8 @@ const PATHS = {
 };
 
 module.exports = {
+    watch: true,
+    entry: PATHS.source + 'app.js',
     output: {
         path: PATHS.build,
         filename: 'app.js'
