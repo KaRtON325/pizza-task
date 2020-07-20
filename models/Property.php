@@ -3,7 +3,6 @@
 namespace app\models;
 
 use Yii;
-use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "{{%properties}}".
@@ -31,7 +30,7 @@ class Property extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name'], 'required'],
+            [['name', 'created_at', 'updated_at'], 'required'],
             [['created_at', 'updated_at'], 'integer'],
             [['name'], 'string', 'max' => 255],
         ];
@@ -40,12 +39,12 @@ class Property extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function behaviors() {
-        return [
-            'timestamp' => [
-                'class' => TimestampBehavior::class,
-            ],
-        ];
+    public function fields()
+    {
+        $fields = parent::fields();
+        unset($fields['created_at'], $fields['updated_at']);
+
+        return $fields;
     }
 
     /**

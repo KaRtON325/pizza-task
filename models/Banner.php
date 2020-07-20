@@ -3,25 +3,24 @@
 namespace app\models;
 
 use Yii;
-use yii\behaviors\TimestampBehavior;
 
 /**
- * This is the model class for table "{{%settings}}".
+ * This is the model class for table "{{%banners}}".
  *
  * @property int $id
- * @property string $name
- * @property string $value
+ * @property string $image
+ * @property string|null $link
  * @property int $created_at
  * @property int $updated_at
  */
-class Settings extends \yii\db\ActiveRecord
+class Banner extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return '{{%settings}}';
+        return '{{%banners}}';
     }
 
     /**
@@ -30,21 +29,21 @@ class Settings extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'name', 'value'], 'required'],
-            [['id', 'created_at', 'updated_at'], 'integer'],
-            [['name', 'value'], 'string', 'max' => 255],
+            [['image', 'created_at', 'updated_at'], 'required'],
+            [['created_at', 'updated_at'], 'integer'],
+            [['image', 'link'], 'string', 'max' => 255],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function behaviors() {
-        return [
-            'timestamp' => [
-                'class' => TimestampBehavior::class,
-            ],
-        ];
+    public function fields()
+    {
+        $fields = parent::fields();
+        unset($fields['created_at'], $fields['updated_at']);
+
+        return $fields;
     }
 
     /**
@@ -54,8 +53,8 @@ class Settings extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'name' => Yii::t('app', 'Name'),
-            'value' => Yii::t('app', 'Value'),
+            'image' => Yii::t('app', 'Image'),
+            'link' => Yii::t('app', 'Link'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];

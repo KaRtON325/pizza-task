@@ -3,7 +3,6 @@
 namespace app\models;
 
 use Yii;
-use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "{{%orders}}".
@@ -18,6 +17,8 @@ use yii\behaviors\TimestampBehavior;
  * @property string $phone_number
  * @property float $total
  * @property float $delivery_price
+ * @property int $created_at
+ * @property int $updated_at
  *
  * @property Currency $currency
  * @property OrderProduct[] $orderProducts
@@ -40,22 +41,11 @@ class Order extends \yii\db\ActiveRecord
     {
         return [
             [['user_id', 'currency_id', 'created_at', 'updated_at'], 'integer'],
-            [['first_name', 'last_name', 'address', 'email', 'phone_number', 'total', 'delivery_price'], 'required'],
+            [['first_name', 'last_name', 'address', 'email', 'phone_number', 'total', 'delivery_price', 'created_at', 'updated_at'], 'required'],
             [['total', 'delivery_price'], 'number'],
             [['first_name', 'last_name', 'address', 'email', 'phone_number'], 'string', 'max' => 255],
             [['currency_id'], 'exist', 'skipOnError' => true, 'targetClass' => Currency::class, 'targetAttribute' => ['currency_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function behaviors() {
-        return [
-            'timestamp' => [
-                'class' => TimestampBehavior::class,
-            ],
         ];
     }
 
@@ -75,6 +65,8 @@ class Order extends \yii\db\ActiveRecord
             'phone_number' => Yii::t('app', 'Phone Number'),
             'total' => Yii::t('app', 'Total'),
             'delivery_price' => Yii::t('app', 'Delivery Price'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'updated_at' => Yii::t('app', 'Updated At'),
         ];
     }
 

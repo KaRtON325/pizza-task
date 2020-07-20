@@ -2,8 +2,11 @@
 
 namespace app\controllers;
 
+use app\models\Banner;
+use app\models\Product;
 use app\models\SignupForm;
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\filters\auth\HttpBearerAuth;
 use yii\rest\Controller;
 use yii\filters\VerbFilter;
@@ -16,7 +19,7 @@ class ApiController extends Controller
      *
      * @var bool $enableCsrfValidation
      */
-    public $enableCsrfValidation = false;
+    public $enableCsrfValidation = true;
 
     /**
      * {@inheritdoc}
@@ -32,6 +35,7 @@ class ApiController extends Controller
             ],
             'authenticator' => [
                 'class' => HttpBearerAuth::class,
+                'only' => ['getBanners']
             ]
         ];
     }
@@ -65,7 +69,6 @@ class ApiController extends Controller
      * Login action.
      *
      * @return array
-     * @throws \Exception
      */
     public function actionSignup()
     {
@@ -76,5 +79,33 @@ class ApiController extends Controller
         } else {
             return ['result' => 'error', 'messages' => $model->getFirstErrors()];
         }
+    }
+
+    /**
+     * Returns yii\data\ActiveDataProvider object formed by query
+     *
+     * @return ActiveDataProvider
+     */
+    public function actionGetBanners() {
+        return new ActiveDataProvider([
+            'query' => Banner::find(),
+            'pagination' => [
+                'pageSize' => 0,
+            ],
+        ]);
+    }
+
+    /**
+     * Returns yii\data\ActiveDataProvider object formed by query
+     *
+     * @return ActiveDataProvider
+     */
+    public function actionGetProducts() {
+        return new ActiveDataProvider([
+            'query' => Product::find()->joinWith(['productProperties', 'productProperties.property']),
+            'pagination' => [
+                'pageSize' => 0,
+            ],
+        ]);
     }
 }

@@ -8,8 +8,12 @@ const PATHS = {
 module.exports = {
     watch: true,
     entry: PATHS.source + 'app.js',
+    mode: "development",
     output: {
         path: PATHS.build,
         filename: 'app.js'
+    },
+    externals: {
+        jquery: 'jQuery'
     }
 };

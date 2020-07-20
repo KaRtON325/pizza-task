@@ -3,14 +3,11 @@
 namespace app\models;
 
 use Yii;
-use yii\behaviors\TimestampBehavior;
-use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%users}}".
  *
  * @property int $id
- * @property string $password
  * @property string $password_hash
  * @property string $access_token
  * @property string $email
@@ -21,15 +18,6 @@ use yii\helpers\ArrayHelper;
  */
 class User extends \yii\db\ActiveRecord
 {
-    /**
-     * @var string
-     */
-    public string $password;
-
-    const SCENARIO_LOGIN = 'login';
-    const SCENARIO_REGISTER = 'register';
-    const SCENARIO_UPDATE = 'update';
-
     /**
      * {@inheritdoc}
      */
@@ -44,31 +32,10 @@ class User extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['login', 'password_hash', 'email'], 'required'],
+            [['password_hash', 'access_token', 'email', 'created_at', 'updated_at'], 'required'],
             [['created_at', 'updated_at'], 'integer'],
-            [['password', 'password_hash', 'email', 'access_token'], 'string', 'max' => 255],
+            [['password_hash', 'access_token', 'email'], 'string', 'max' => 255],
             [['email'], 'unique'],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function behaviors() {
-        return [
-            'timestamp' => [
-                'class' => TimestampBehavior::class,
-            ],
-        ];
-    }
-
-    /** @inheritdoc */
-    public function scenarios()
-    {
-        return [
-            self::SCENARIO_REGISTER => ['email', 'password'],
-            self::SCENARIO_LOGIN => ['email', 'password'],
-            self::SCENARIO_UPDATE   => ['email', 'password'],
         ];
     }
 
@@ -79,8 +46,8 @@ class User extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'login' => Yii::t('app', 'Login'),
             'password_hash' => Yii::t('app', 'Password Hash'),
+            'access_token' => Yii::t('app', 'Access Token'),
             'email' => Yii::t('app', 'Email'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -95,28 +62,5 @@ class User extends \yii\db\ActiveRecord
     public function getOrders()
     {
         return $this->hasMany(Order::class, ['user_id' => 'id']);
-    }
-
-    /**
-     * Generates password hash from password and sets it to the model
-     *
-     * @param string $password
-     * @throws \yii\base\Exception
-     */
-    public function setPassword($password)
-    {
-        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
-    }
-
-    /**
-     * Find user by access token
-     *
-     * @param $token
-     * @param null $type
-     * @return User|null
-     */
-    public static function findIdentityByAccessToken($token, $type = null)
-    {
-        return static::findOne(['access_token' => $token]);
     }
 }

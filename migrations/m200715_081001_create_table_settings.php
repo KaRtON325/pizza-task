@@ -14,7 +14,7 @@ class m200715_081001_create_table_settings extends Migration
         $this->createTable(
             '{{%settings}}',
             [
-                'id' => $this->integer()->unsigned()->notNull(),
+                'id' => $this->primaryKey()->unsigned(),
                 'name' => $this->string()->notNull(),
                 'value' => $this->string()->notNull(),
                 'created_at' => $this->integer()->notNull(),

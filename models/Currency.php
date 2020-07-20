@@ -3,7 +3,6 @@
 namespace app\models;
 
 use Yii;
-use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "{{%currencies}}".
@@ -11,8 +10,8 @@ use yii\behaviors\TimestampBehavior;
  * @property int $id
  * @property string $name
  * @property string $symbol
- * @property float $rate
- * @property int $is_base
+ * @property float $rate Multiplier for the base currency
+ * @property int $is_base Sets the base currency that will be used to calculate price in other currencies
  * @property int $created_at
  * @property int $updated_at
  *
@@ -34,21 +33,10 @@ class Currency extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'symbol', 'rate', 'is_base'], 'required'],
+            [['name', 'symbol', 'rate', 'is_base', 'created_at', 'updated_at'], 'required'],
             [['rate'], 'number'],
             [['is_base', 'created_at', 'updated_at'], 'integer'],
             [['name', 'symbol'], 'string', 'max' => 255],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function behaviors() {
-        return [
-            'timestamp' => [
-                'class' => TimestampBehavior::class,
-            ],
         ];
     }
 

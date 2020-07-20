@@ -1,0 +1,25 @@
+@import 'colors';
+
+$theme-colors: (
+  "primary":    $primary,
+  "secondary":  $secondary
+);
+
+$body-color:              $text;
+$body-bg:                 $primary;
+$font-family-sans-serif:  Lato, sans-serif;
+
+.show {
+  display: block !important;
+  opacity: 1 !important;
+}
+
+.btn:focus,
+.btn:active:focus {
+  outline: none;
+}
+
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/mixins";
+@import 'node_modules/bootstrap-vue/src/index.scss';
