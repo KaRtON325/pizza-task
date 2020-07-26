@@ -42,8 +42,8 @@
         "post-create-project-cmd": [
             "yii\\composer\\Installer::postCreateProject",
             "yii\\composer\\Installer::postInstall",
-            "yarn install",
-            "yarn dev"
+            "npm install",
+            "npm run production"
         ]
     },
     "extra": {
