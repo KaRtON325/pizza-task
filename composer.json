@@ -37,16 +37,14 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "npm install",
-            "npm run production",
+            "yarn install",
+            "yarn production",
             "sh post-install-cmd.sh",
             "yii\\composer\\Installer::postInstall"
         ],
         "post-create-project-cmd": [
             "yii\\composer\\Installer::postCreateProject",
             "yii\\composer\\Installer::postInstall",
-            "npm install",
-            "npm run production"
         ]
     },
     "extra": {
