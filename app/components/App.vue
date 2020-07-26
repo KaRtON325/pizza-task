@@ -23,6 +23,20 @@ body {
 #content {
   flex: 1 0 auto;
 }
+
+.not-found {
+  display: block;
+  margin-top: 6rem;
+  color: $secondary;
+  font-size: 5rem;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+
+  span {
+    color: $base;
+  }
+}
 </style>
 
 <template>
@@ -33,8 +47,8 @@ body {
             <transition>
                 <router-view></router-view>
             </transition>
-            <div v-if="this.$route.matched.length === 0">
-                <span class="not-found">404 Not Found</span>
+            <div class="text-center" v-if="this.$route.matched.length === 0">
+                <span class="not-found">404 <span>Not Found</span></span>
             </div>
         </div>
 

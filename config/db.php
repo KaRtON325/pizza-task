@@ -2,9 +2,9 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=127.0.0.1;dbname=pizza_task',
-    'username' => 'root',
-    'password' => 'root',
+    'dsn' => 'mysql:host=db4free.net;dbname=pizza_task_vakil',
+    'username' => 'pizza_task_vakil',
+    'password' => 'Vep-GDS-MpS-rfx',
     'charset' => 'utf8',
 
     // Schema cache options (for production environment)
