@@ -37,6 +37,9 @@
     },
     "scripts": {
         "post-install-cmd": [
+            "npm install",
+            "npm run production",
+            "sh post-install-cmd.sh",
             "yii\\composer\\Installer::postInstall"
         ],
         "post-create-project-cmd": [
