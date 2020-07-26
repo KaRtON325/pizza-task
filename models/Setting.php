@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "{{%settings}}".
@@ -26,10 +27,21 @@ class Setting extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public function behaviors() {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::class,
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function rules()
     {
         return [
-            [['name', 'value', 'created_at', 'updated_at'], 'required'],
+            [['name', 'value'], 'required'],
             [['created_at', 'updated_at'], 'integer'],
             [['name', 'value'], 'string', 'max' => 255],
         ];
@@ -47,5 +59,15 @@ class Setting extends \yii\db\ActiveRecord
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
+    }
+
+    /**
+     * Returns current delivery price from settings in specified rate
+     *
+     * @param float $rate Specified currency rate
+     */
+    public static function getDeliveryPrice(float $rate = 1): float {
+        $price = self::findOne(['name' => 'delivery_price'])->value;
+        return ($price * $rate);
     }
 }

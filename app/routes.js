@@ -5,6 +5,7 @@ let AboutPage = require('./pages/AboutPage.vue').default;
 let LoginPage = require('./pages/LoginPage.vue').default;
 let SignupPage = require('./pages/SignupPage.vue').default;
 let CartPage = require('./pages/CartPage.vue').default;
+let HistoryPage = require('./pages/HistoryPage.vue').default;
 
 let routes = [
     { path: '/', component: LandingPage, name: 'landing', meta: {
@@ -13,7 +14,12 @@ let routes = [
     },
     { path: '/about', component: AboutPage, name: 'about', meta: {
             title: 'About',
-        }},
+        }
+    },
+    { path: '/history', component: HistoryPage, name: 'history', meta: {
+            title: 'History',
+        }
+    },
     { path: '/login', component: LoginPage, name: 'login', meta: {
             title: 'Login',
         }
@@ -30,7 +36,7 @@ let routes = [
 
 let router = new VueRouter({
     mode: 'history',
-    routes
+    routes,
 });
 
 // Shows page title

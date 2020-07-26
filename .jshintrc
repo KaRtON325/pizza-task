@@ -3,5 +3,5 @@
   "browser"   : false,
   "es3"       : false,
   "node"      : true,
-  "esversion" : 6
+  "esversion" : 9
 }

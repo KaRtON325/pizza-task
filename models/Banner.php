@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "{{%banners}}".
@@ -26,10 +27,21 @@ class Banner extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public function behaviors() {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::class,
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function rules()
     {
         return [
-            [['image', 'created_at', 'updated_at'], 'required'],
+            [['image'], 'required'],
             [['created_at', 'updated_at'], 'integer'],
             [['image', 'link'], 'string', 'max' => 255],
         ];

@@ -1,0 +1,30 @@
+@import 'colors';
+
+.main {
+  padding-top: 2rem;
+
+  &__header {
+    color: $base;
+    font-family: Montserrat, sans-serif;
+    font-size: 8rem;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+
+    span {
+      color: $secondary;
+    }
+  }
+}
+
+.empty-text {
+  color: #f8a808;
+  font-size: 5rem;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+
+  span {
+    color: $base;
+  }
+}

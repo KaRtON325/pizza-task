@@ -27,7 +27,7 @@ body {
 
 <template>
     <div id="wrapper">
-        <DropdownMenu ref="dropdownMenu"/>
+        <DropdownMenu/>
 
         <div id="content" class="container">
             <transition>

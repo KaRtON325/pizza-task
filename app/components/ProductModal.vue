@@ -3,6 +3,31 @@
 @import '../bootstrap';
 @import 'node_modules/bootstrap/scss/tooltip';
 
+// Modal
+
+.modal-dialog {
+  max-width: 50%;
+  margin: 0 auto;
+}
+
+.modal-content {
+  border-radius: 2rem;
+}
+
+.modal-close {
+  position: absolute;
+  top: -6rem;
+  right: -6rem;
+  display: flex;
+  padding: 0.5rem;
+  border-radius: 50%;
+
+  &__icon {
+    width: 4rem;
+    height: 4rem;
+  }
+}
+
 // Modal content
 
 .product-modal {
@@ -26,6 +51,8 @@
   }
 
   &__buttons {
+    font-family: Montserrat, sans-serif;
+
     .btn {
       font-size: 2rem;
     }
@@ -36,39 +63,12 @@
 
 .popper {
   padding: 2rem;
-  box-shadow: rgb(172, 153, 153) 0px 0px 20px 0;
-}
-
-// Modal
-
-.modal-dialog {
-  top: 50%;
-  max-width: 50%;
-  margin: 0 auto;
-  transform: translate(0, -50%) !important;
-}
-
-.modal-content {
-  border-radius: 2rem;
-}
-
-.modal-close {
-  position: absolute;
-  top: -6rem;
-  right: -6rem;
-  display: flex;
-  padding: 0.5rem;
-  border-radius: 50%;
-
-  &__icon {
-    width: 4rem;
-    height: 4rem;
-  }
+  box-shadow: rgb(172, 153, 153) 0 0 20px 0;
 }
 </style>
 
 <template>
-    <b-modal v-if="product" v-bind:id="'product-' + product.id" class="product-modal" hide-footer hide-header>
+    <b-modal centered v-if="product" v-bind:id="'product-' + product.id" class="product-modal" hide-footer hide-header>
         <b-button class="modal-close" @click="$bvModal.hide('product-' + product.id)">
             <svg viewBox="0 0 24 24" class="modal-close__icon">
                 <title>Close</title>
@@ -82,8 +82,8 @@
             </b-col>
             <b-col cols="4">
                 <div class="product-modal__title"><span>{{ product.name }}</span></div>
-                <b-list-group v-if="product.productProperties" class="product-modal__props">
-                    <b-list-group-item v-for="productProperty in product.productProperties" :key="productProperty.id" class="d-flex justify-content-between align-items-center">
+                <b-list-group v-if="product.product_properties" class="product-modal__props">
+                    <b-list-group-item v-for="productProperty in product.product_properties" :key="productProperty.id" class="d-flex justify-content-between align-items-center">
                         {{ productProperty.property.name }}
                         <span>{{ productProperty.value }}</span>
                     </b-list-group-item>
@@ -96,7 +96,12 @@
                     </div>
 
                     <b-button-group slot="reference" v-bind:id="'product-' + product.id + '-buttons'" class="product-modal__buttons">
-                        <b-button @click="addProductToCart(product)">&minus;</b-button>
+                        <b-button
+                            :disabled="!_get(cartProducts.find(cartProduct => cartProduct.id === product.id), 'quantity', 0)"
+                            @click="removeProductFromCart(product)"
+                        >
+                            &minus;
+                        </b-button>
                         <b-button href="/cart" @click="addProductToCart(product)">Checkout</b-button>
                         <b-button @click="addProductToCart(product)">&plus;</b-button>
                     </b-button-group>
@@ -124,15 +129,25 @@
         }),
         methods: {
             ...mapActions('cart', [
-                'addProductToCart'
+                'addProductToCart',
+                'removeProductFromCart'
             ]),
             _get(object, search, defaultValue) {
                 return get(object, search, defaultValue)
             }
         },
-        props: ['product'],
+        props: {
+            product: { required: true },
+        },
         components: {
             'popper': Popper
+        },
+        mounted() {
+            let anchor = location.hash.substr(1)
+            if (anchor) {
+                this.$router.replace({ path: window.location.pathname })
+                this.$bvModal.show(anchor)
+            }
         },
         data() {
             return {

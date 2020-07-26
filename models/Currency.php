@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "{{%currencies}}".
@@ -30,14 +31,36 @@ class Currency extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public function behaviors() {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::class,
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function rules()
     {
         return [
-            [['name', 'symbol', 'rate', 'is_base', 'created_at', 'updated_at'], 'required'],
+            [['name', 'symbol', 'rate', 'is_base'], 'required'],
             [['rate'], 'number'],
             [['is_base', 'created_at', 'updated_at'], 'integer'],
             [['name', 'symbol'], 'string', 'max' => 255],
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fields()
+    {
+        $fields = parent::fields();
+        unset($fields['created_at'], $fields['updated_at']);
+
+        return $fields;
     }
 
     /**

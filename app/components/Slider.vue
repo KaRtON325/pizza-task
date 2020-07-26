@@ -57,7 +57,7 @@
         },
         mounted() {
             axios
-                .get('/api/get-banners')
+                .get('/api/public/get-banners')
                 .then(response => this.banners = response.data);
         }
     }

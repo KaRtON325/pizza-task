@@ -23,8 +23,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'yii\web\IdentityInterface::findIdentityByAccessToken()',
-            //'identityClass' => 'app\models\User',
+            'identityClass' => 'app\models\User',
             //'enableAutoLogin' => true,
             'enableSession' => false,
             'loginUrl' => null,
@@ -53,10 +52,11 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                '<controller:\w+>/public/<action:(\w|-)+>' => '<controller>/public-<action>',
                 '<controller:(\w|-)+>/' => 'site/index',
                 '<controller:\w+>/<action:(\w|-)+>/<id:\d+>' => 'site/index',
                 '<module:\w+>/<controller:\w+>/<action:(\w|-)+>' => '<module>/<controller>/<action>',
-                '<controller:\w+>/<action:(\w|-)+>' => '<controller>/<action>'
+                '<controller:\w+>/<action:(\w|-)+>' => '<controller>/<action>',
             ],
         ]
     ],

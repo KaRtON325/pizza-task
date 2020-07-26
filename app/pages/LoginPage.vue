@@ -1,108 +1,146 @@
+<style lang="scss">
+@import '../fonts';
+@import '../colors';
+@import '../global';
+@import '../bootstrap';
+@import 'node_modules/bootstrap/scss/forms';
+@import 'node_modules/bootstrap/scss/custom-forms';
+@import 'node_modules/bootstrap/scss/utilities';
+
+.form-horizontal {
+  padding: 2rem;
+  background-color: $base;
+  border-radius: 2rem;
+}
+
+.login-button {
+  padding: 1rem !important;
+  border-radius: 2rem !important;
+  font-family: Montserrat, sans-serif;
+  text-transform: uppercase;
+}
+</style>
+
 <template>
-    <div>
+    <div class="main">
+        <h1 class="main__header">Log<span>in</span></h1>
 
-        <div v-if="is_logged_in">
-            <h1>User was successfully logged in. Found user id {{current_user}}</h1>
+        <div class="empty-text" v-if="is_logged_in">
+            User was successfully <span> logged in</span>
         </div>
-        <div class="form-horizontal" v-else>
-            <h1>Login page</h1>
-            <p>Please fill out the following fields to login:</p>
+        <div class="form-horizontal mt-5" v-else>
+            <div class="container">
+                <p>Please fill out the following fields to login:</p>
 
-            <div class="form-group field-loginform-username required" :class="{'has-error': login_error.length != 0}">
-                <label for="loginform-username" class="col-lg-1 control-label">Username</label>
-                <div class="col-lg-3">
-                    <input type="text" id="loginform-username" v-model="login"
-                           autofocus="autofocus" aria-required="true" class="form-control"
-                           :aria-invalid="login_error.length != 0">
-                </div>
-                <div class="col-lg-8" v-if="login_error.length != 0">
-                    <p class="help-block help-block-error">{{login_error}}</p>
-                </div>
-            </div>
+                <FormInput
+                        type="email"
+                        id="email"
+                        label="E-mail"
+                        name="email"
+                        v-model="values.email"
+                        :error="errors.email"
+                        error_text="Please fill your email in."
+                        @validate="validate('email')" />
 
-            <div class="form-group field-loginform-password required"
-                 :class="{'has-error': password_error.length != 0}">
-                <label for="loginform-password" class="col-lg-1 control-label">Password</label>
-                <div class="col-lg-3">
-                    <input type="password" id="loginform-password" v-model="password" aria-required="true"
-                           class="form-control" :aria-invalid="password_error.length != 0">
-                </div>
-                <div class="col-lg-8" v-if="password_error.length != 0">
-                    <p class="help-block help-block-error ">{{password_error}}</p>
-                </div>
-            </div>
-            <div class="form-group field-loginform-rememberme">
-                <div class="col-lg-offset-1 col-lg-3">
-                    <input type="checkbox" id="loginform-rememberme" v-model="remember_me">
-                    <label for="loginform-rememberme">Remember Me</label>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-lg-offset-1 col-lg-11">
-                    <button type="button" name="login-button" class="btn btn-primary" @click="attemptLogin">Login
-                    </button>
-                </div>
-            </div>
+                <FormInput
+                        type="password"
+                        id="password"
+                        label="Password"
+                        name="password"
+                        v-model="values.password"
+                        :error="errors.password"
+                        error_text="Please fill your password in. Enter at least 6 characters."
+                        @validate="validate('password')" />
 
-            <div class="col-lg-offset-1" style="color:#999;">
-                You may login with <strong>admin/admin</strong> or <strong>demo/demo</strong>.<br>
-                To modify the username/password, please check out the code <code>app\models\User::$users</code>.
+                <div class="clearfix">
+                    <div class="col-sm-offset-4 col-lg-offset-3 col-sm-8 col-lg-9">
+                        <b-button variant="primary" name="login-button" class="login-button row" @click="submitForm">Login</b-button>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <b-modal centered id="error-modal"><div v-html="login_errors"></div></b-modal>
     </div>
 </template>
 
 <script>
+    window.Vue = require('vue');
+    import {FormGroupPlugin, FormPlugin} from "bootstrap-vue";
+    import isEmpty from 'lodash/isEmpty';
+    import loginFormSchema from "../schemas/loginFormSchema.js";
+    import { mapState,  mapActions } from 'vuex'
+    Vue.use(FormGroupPlugin)
+    Vue.use(FormPlugin)
+
     export default {
+        computed: {
+            ...mapState({
+                is_logged_in: state => state.is_logged_in
+            })
+        },
         data() {
             return {
-                is_logged_in: false,
-                current_user: null,
-                login: '',
-                password: '',
-                remember_me: 0,
-                login_error: '',
-                password_error: ''
+                login_errors: false,
+                values: {
+                    email: "",
+                    password: "",
+                },
+                errors: {
+                    email: null,
+                    password: null,
+                },
             }
         },
         methods: {
-            attemptLogin() {
-                this.login_error = '';
-                this.password_error = '';
+            ...mapActions('access', [
+                'checkUserAuth',
+                'changeAccessToken',
+            ]),
+            validate(field) {
+                loginFormSchema
+                    .validate(this.values, { abortEarly: false })
+                    .then(() => { this.errors = {} })
+                    .catch(err => {
+                        this.errors = {};
+                        if (err.inner) {
+                            err.inner.forEach(err => {
+                                this.errors[err.path] = false
+                            })
+                        }
+                    })
+            },
+            submitForm() {
+                loginFormSchema
+                    .validate(this.values, { abortEarly: false })
+                    .then()
+                    .catch(err => {
+                        err.inner.forEach(err => {
+                            this.errors = { ...this.errors, [err.path]: false }
+                        });
+                    });
 
-                if (!this.login.length) {
-                    this.login_error = 'Username cannot be blank.';
-                }
-
-                if (!this.password.length) {
-                    this.password_error = 'Password cannot be blank.';
-                }
-
-                if(this.password_error.length == 0 && this.login_error.length == 0) {
+                if (isEmpty(this.errors)) {
                     axios({
                         method: 'post',
-                        url: '/api/login',
+                        url: '/api/public/login',
                         responseType: 'json',
-                        data: {
-                            username: this.login,
-                            password: this.password,
-                            rememberMe: this.remember_me
-                        }
+                        data: this.values
                     }).then((response) => {
-                        if (response.data.result == 'success') {
-                            this.is_logged_in = true;
-                            this.current_user = response.data.user_id;
+                        if (response.data.status) {
+                            this.$store.dispatch('access/changeAccessToken', response.data.access_token)
+                            this.$store.dispatch('access/changeIsLoggedIn', true)
+                            this.$router.push({ name: 'landing'})
                         } else {
-                            if (response.data.messages.password) {
-                                this.password_error = response.data.messages.password;
-                            }
-                            if (response.data.messages.username) {
-                                this.login_error = response.data.messages.username;
-                            }
+                            this.signup_errors = response.data.errors;
+                            this.$bvModal.show('error-modal')
                         }
-                })
+                    })
                 }
-            }
-        }
+            },
+        },
+        created () {
+            this.$store.dispatch('access/checkUserAuth')
+        },
     }
 </script>

@@ -10,7 +10,7 @@ const getters = {}
 const actions = {
   getAllProducts ({ commit }) {
     axios
-        .get('/api/get-products?expand=productProperties,productProperties.property')
+        .get('/api/public/get-products?expand=product_properties,product_properties.property')
         .then(response => {commit('setProducts', response.data)});
   }
 }

@@ -2,21 +2,21 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import cart from './modules/cart'
 import products from './modules/products'
+import access from './modules/access'
 import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex)
 
-const debug = process.env.NODE_ENV !== 'production'
-
-const cartState = createPersistedState({
-  paths: ['cart']
+const storeState = createPersistedState({
+  paths: ['cart', 'access']
 })
 
 export default new Vuex.Store({
   modules: {
     cart,
-    products
+    products,
+    access,
   },
-  strict: debug,
-  plugins: [cartState],
+  strict: process.env.NODE_ENV === 'production',
+  plugins: [storeState],
 })

@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%orders}}".
@@ -37,16 +39,48 @@ class Order extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public function behaviors() {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::class,
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function rules()
     {
         return [
             [['user_id', 'currency_id', 'created_at', 'updated_at'], 'integer'],
-            [['first_name', 'last_name', 'address', 'email', 'phone_number', 'total', 'delivery_price', 'created_at', 'updated_at'], 'required'],
+            [['first_name', 'last_name', 'address', 'email', 'phone_number', 'total', 'delivery_price'], 'required'],
             [['total', 'delivery_price'], 'number'],
+            [['address'], 'string', 'max' => 1020],
             [['first_name', 'last_name', 'address', 'email', 'phone_number'], 'string', 'max' => 255],
+            [['email'], 'email'],
             [['currency_id'], 'exist', 'skipOnError' => true, 'targetClass' => Currency::class, 'targetAttribute' => ['currency_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fields()
+    {
+        $fields = parent::fields();
+        unset($fields['user_id'], $fields['currency_id'], $fields['updated_at']);
+
+        return $fields;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function extraFields()
+    {
+        return ['order_products' => 'orderProducts', 'orderProducts.product', 'currency'];
     }
 
     /**
@@ -98,5 +132,70 @@ class Order extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+
+    /**
+     * Calculates total by products
+     *
+     * @param Product[] $products
+     * @param array $quantities Array of shape: [id => quantity]
+     * @param Currency $currency
+     */
+    public static function getTotalByProducts(array $products, array $quantities, Currency $currency):float {
+        $total = 0;
+        foreach ($products as $product) {
+            $total += $product->price * $quantities[$product->id] * $currency->rate;
+        }
+
+        return $total;
+    }
+
+    /**
+     * Returns array with product prices in all currencies,
+     * delivery price and totals in all currencies
+     *
+     * @param array $cartProducts
+     * @return array
+     */
+    public static function getPrices(array $cartProducts): array
+    {
+        $prices = [
+            'products' => [],
+            'delivery_prices' => [],
+            'totals' => [],
+        ];
+
+        /**
+         * @var $currencies Currency[]
+         */
+        $currencies = Currency::find()->all();
+        $products = Product::getProductsByCartItems($cartProducts); // Getting array of product objects
+        $quantities = ArrayHelper::map($cartProducts, 'id', 'quantity'); // Getting rates array based on currencies
+        $base_delivery_price = Setting::getDeliveryPrice(); // Getting base delivery price stated in site settings
+
+        foreach ($products as $product) {
+            $quantity = $quantities[$product->id];
+            // Multiplying product prices by quantities and calculating order total in all currencies
+            $prices['products'][$product->id] = array_merge(
+                ['prices' => $product->getPrices($currencies)],
+                ['totals' => $product->getPrices($currencies, $quantity)]
+            );
+        }
+
+        foreach ($currencies as $currency) {
+            $delivery_price = $base_delivery_price * $currency->rate;
+            $prices['delivery_prices'][] = [
+                'value' => $delivery_price,
+                'currency_id' => $currency->id,
+                'symbol' => $currency->symbol
+            ];
+            $prices['totals'][] = [
+                'value' => self::getTotalByProducts($products, $quantities, $currency) + $delivery_price,
+                'currency_id' => $currency->id,
+                'symbol' => $currency->symbol
+            ];
+        }
+
+        return $prices;
     }
 }

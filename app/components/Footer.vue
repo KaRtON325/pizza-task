@@ -75,30 +75,45 @@
                             Navigation
                         </li>
                         <li>
+                            <router-link to="/" class="dropdown__menu-link" title="Home">
+                                <div class="dropdown__menu-text">Home</div>
+                            </router-link>
+                        </li>
+                        <li>
                             <router-link to="/cart" class="dropdown__menu-link" title="Cart">
                                 <div class="dropdown__menu-text">Cart</div>
                             </router-link>
                         </li>
                         <li>
-                            <router-link to="/cart" class="dropdown__menu-link" title="History">
-                                <div class="dropdown__menu-text">History</div>
+                            <router-link to="/cart" class="dropdown__menu-link" title="About">
+                                <div class="dropdown__menu-text">About</div>
                             </router-link>
                         </li>
                     </ul>
                 </b-col>
                 <b-col>
-                    <ul>
+                    <ul v-if="!is_logged_in">
                         <li class="col-title">
                             User section
                         </li>
                         <li>
-                            <router-link to="/cart" class="dropdown__menu-link" title="Cart">
+                            <router-link to="/login" class="dropdown__menu-link" title="Login">
                                 <div class="dropdown__menu-text">Login</div>
                             </router-link>
                         </li>
                         <li>
-                            <router-link to="/cart" class="dropdown__menu-link" title="History">
+                            <router-link to="/signup" class="dropdown__menu-link" title="Signup">
                                 <div class="dropdown__menu-text">Signup</div>
+                            </router-link>
+                        </li>
+                    </ul>
+                    <ul v-else>
+                        <li class="col-title">
+                            User section
+                        </li>
+                        <li>
+                            <router-link to="/history" class="dropdown__menu-link" title="History">
+                                <div class="dropdown__menu-text">History</div>
                             </router-link>
                         </li>
                     </ul>
@@ -114,9 +129,23 @@
 <script>
     window.Vue = require('vue');
     import { LayoutPlugin } from 'bootstrap-vue'
+    import { mapState,  mapActions } from 'vuex'
     Vue.use(LayoutPlugin)
 
     export default {
+        created () {
+            this.$store.dispatch('access/checkUserAuth')
+        },
+        methods: {
+            ...mapActions('access', [
+                'checkUserAuth',
+            ]),
+        },
+        computed: {
+            ...mapState({
+                is_logged_in: state => state.access.is_logged_in
+            })
+        },
         data() {
             return {
 

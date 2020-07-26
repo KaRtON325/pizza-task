@@ -19,17 +19,17 @@ class SignupForm extends Model
     /**
      * @var string
      */
-    public string $email;
+    public $email;
 
     /**
      * @var string
      */
-    public string $password;
+    public $password;
 
     /**
      * @var string
      */
-    public string $password_confirm;
+    public $password_confirm;
 
     /**
      * @return array the validation rules.
@@ -37,11 +37,17 @@ class SignupForm extends Model
     public function rules()
     {
         return [
-            // username and password are both required
             [['email', 'password', 'password_confirm'], 'required'],
-            // password is validated by validatePassword()
-            ['password', 'validatePassword'],
+
+            ['email', 'trim'],
+            ['email', 'email'],
+            ['email', 'string', 'max' => 255],
+            ['email', 'unique', 'targetClass' => '\app\models\User', 'message' =>  Yii::t('app', 'This email address has already been taken.')],
+
+            ['password', 'string', 'min' => 6],
+
             ['password_confirm', 'compare', 'compareAttribute' => 'password', 'message' => Yii::t('app', 'Passwords don\'t match')],
+
             ['email', 'email'],
         ];
     }
@@ -49,26 +55,22 @@ class SignupForm extends Model
     /**
      * Signs user up.
      *
-     * @return User|null the saved model or null if saving fails
+     * @return User|SignupForm
      * @throws \Exception
      */
-    public function signup()
+    public function signup():Model
     {
         if (!$this->validate()) {
-            return null;
+            return $this;
         }
 
-        $user = new User([
+        $model = new User([
             'email' => $this->email,
-            'password' = $this->password,
+            'password' => $this->password,
             'scenario' => User::SCENARIO_REGISTER
         ]);
+        $model->save();
 
-        /*Yii::$app->session->setFlash(
-            'error',
-            Html::errorSummary($user)
-        );
-
-        return $isSuccess ? $user : null;*/
+        return $model;
     }
 }

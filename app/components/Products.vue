@@ -92,8 +92,8 @@
 </style>
 
 <template>
-    <b-row class="products">
-        <b-col cols="4" v-for="product in products" :key="product.id" v-bind:id="'product-' + product.id" class="product-container">
+    <b-row class="products mt-5">
+        <b-col cols="4" v-for="product in products" :key="product.id" class="product-container">
             <article class="product mb-5">
                 <b-button variant="link" href="#" @click="$bvModal.show('product-' + product.id)" to="#" class="product__image">
                     <img :src="product.image" alt="Product Image">
@@ -105,7 +105,7 @@
                 <footer class="product__buttons">
                     <div class="product__prices">
                         <span class="product__price" v-for="price in product.prices" :key="price.currency_id">
-                            {{ price.symbol + Math.floor(price.value * 100) / 100 }}
+                            {{ getCurrencyPrice(price.value, price.symbol) }}
                         </span>
                     </div>
                     <b-button variant="outline-secondary" @click="$bvModal.show('product-' + product.id)" class="product__button">Select</b-button>
@@ -120,7 +120,7 @@
 <script>
     window.Vue = require('vue');
     import { LayoutPlugin, ButtonPlugin, ModalPlugin, ListGroupPlugin } from 'bootstrap-vue'
-    import { mapState } from 'vuex'
+    import {mapActions, mapState} from 'vuex'
     Vue.use(LayoutPlugin)
     Vue.use(ButtonPlugin)
     Vue.use(ModalPlugin)
@@ -130,6 +130,11 @@
         computed: mapState({
             products: state => state.products.all
         }),
+        methods: {
+            ...mapActions('products', [
+                'getAllProducts',
+            ]),
+        },
         created () {
             this.$store.dispatch('products/getAllProducts')
         },

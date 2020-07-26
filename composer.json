@@ -15,8 +15,8 @@
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0",
         "purrweb/yii2-heroku": "*",
-        "bizley/migration": "dev-master",
-        "lars-t/yii2-vuejs-frontend": "*"
+        "lars-t/yii2-vuejs-frontend": "*",
+        "ext-json": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
@@ -25,7 +25,9 @@
 
         "codeception/base": "^2.2.3",
         "codeception/verify": "~0.3.1",
-        "codeception/specify": "~0.4.3"
+        "codeception/specify": "~0.4.3",
+
+        "bizley/migration": "dev-master"
     },
     "config": {
         "process-timeout": 1800,

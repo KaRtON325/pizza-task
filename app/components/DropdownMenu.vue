@@ -29,13 +29,12 @@
     display: flex;
     align-items: center;
     padding: 1rem;
-    border-radius: 2rem;
+    border-radius: 3rem;
 
     &-text {
       margin-left: 1rem;
       color: $base;
       font-size: 2.5rem;
-      font-weight: bold;
       text-transform: uppercase;
     }
 
@@ -60,6 +59,7 @@
   background-clip: padding-box;
   background-color: white;
   border-radius: 2rem;
+  box-shadow: rgb(172, 153, 153) 0 0 20px 0;
 
   &-nav {
     padding: 0;
@@ -76,6 +76,10 @@
 
   &-item {
     display: inline-flex;
+
+    &:focus {
+      outline: none !important;
+    }
   }
 
   &-link {
@@ -84,7 +88,14 @@
     justify-content: flex-start;
     padding: 0.8rem 0 0.8rem 2rem;
     border-radius: 0 50px 50px 0;
+    box-shadow: none !important;
     text-decoration: none !important;
+
+    :focus {
+      border: none !important;
+      box-shadow: none !important;
+      outline: none !important;
+    }
   }
 
   &-text {
@@ -97,6 +108,13 @@
 
     &:hover {
       color: $secondary;
+      outline: 0 !important;
+      text-decoration: none !important;
+    }
+
+    &:focus {
+      outline: none !important;
+      text-decoration: none !important;
     }
   }
 }
@@ -172,44 +190,93 @@
                             <div class="dropdown__menu-text">Cart</div>
                         </router-link>
                     </li>
+                    <li class="dropdown__menu-item">
+                        <router-link to="/about" class="dropdown__menu-link" title="Cart">
+                            <div class="dropdown__menu-text">About</div>
+                        </router-link>
+                    </li>
                 </ul>
-                <ul class="dropdown__menu-nav">
-                    <li v-if="isAuthorized()" class="dropdown__menu-item">
-                        <router-link to="/cart" class="dropdown__menu-link" title="History">
+
+                <!-- Dropdown Menu Separator -->
+
+                <!-- Logged in user menu start -->
+                <ul v-if="is_logged_in" class="dropdown__menu-nav">
+                    <li class="dropdown__menu-item">
+                        <router-link to="/history" class="dropdown__menu-link" title="History">
                             <div class="dropdown__menu-text">History</div>
                         </router-link>
                     </li>
-                    <li v-if="!isAuthorized()" class="dropdown__menu-item">
-                        <router-link to="/cart" class="dropdown__menu-link" title="Cart">
+                    <li class="dropdown__menu-item">
+                        <b-button variant="link" @click="logout" class="dropdown__menu-link" title="Logout">
+                            <div class="dropdown__menu-text">Logout</div>
+                        </b-button>
+                    </li>
+                </ul>
+                <!-- Logged in user menu end -->
+
+                <!-- Not logged in user menu start -->
+                <ul v-else class="dropdown__menu-nav">
+                    <li class="dropdown__menu-item">
+                        <router-link to="/login" class="dropdown__menu-link" title="Cart">
                             <div class="dropdown__menu-text">Login</div>
                         </router-link>
                     </li>
-                    <li v-if="!isAuthorized()" class="dropdown__menu-item">
-                        <router-link to="/cart" class="dropdown__menu-link" title="History">
+                    <li class="dropdown__menu-item">
+                        <router-link to="/signup" class="dropdown__menu-link" title="History">
                             <div class="dropdown__menu-text">Signup</div>
                         </router-link>
                     </li>
                 </ul>
-                <!-- Dropdown Menu Separator -->
+                <!-- Not logged in user menu end -->
             </div>
         </transition>
+
+        <b-modal centered id="logout-error-modal"><div v-html="logout_errors"></div></b-modal>
     </nav>
 </template>
 
 <script>
     window.Vue = require('vue');
+    import { mapState,  mapActions } from 'vuex'
+    import AsyncComputed from 'vue-async-computed'
     import { ButtonPlugin } from 'bootstrap-vue'
     Vue.use(ButtonPlugin)
-
+    Vue.use(AsyncComputed)
 
     export default {
+        created () {
+            this.$store.dispatch('access/checkUserAuth')
+        },
+        methods: {
+            ...mapActions('access', [
+                'checkUserAuth',
+            ]),
+            logout() {
+                axios
+                    .get('/api/logout')
+                    .then(response => {
+                        if (response.data.status) {
+                            this.$store.dispatch('access/changeIsLoggedIn', false)
+                        } else {
+                            this.logout_errors = response.data.errors;
+                            this.$bvModal.show('logout-error-modal')
+                        }
+                    });
+            },
+        },
         watch:{
             $route() {
                 this.showMenu = false;
             }
         },
+        computed: {
+            ...mapState({
+                is_logged_in: state => state.access.is_logged_in
+            })
+        },
         data() {
             return {
+                logout_errors: null,
                 showMenu: false
             }
         }
