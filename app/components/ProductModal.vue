@@ -47,6 +47,7 @@
   }
 
   &__text {
+    margin: 1rem 0;
     font-size: 2rem;
   }
 

@@ -68,87 +68,39 @@
 </style>
 
 <template>
-    <b-table-simple class="cart-table mb-5" responsive>
-        <b-thead class="cart-table__head">
-            <b-tr>
-                <b-th></b-th>
-                <b-th>Name</b-th>
-                <b-th>Quantity</b-th>
-                <b-th>Price</b-th>
-                <b-th>Total</b-th>
-            </b-tr>
-        </b-thead>
-        <b-tbody>
-            <b-tr class="cart-item" v-for="product in products" :key="product.id">
-                <b-td>
-                    <b-button variant="link" @click="$bvModal.show('product-' + product.id)" class="cart-item__image">
-                        <img v-bind:src="product.image" alt="Product Image">
-                    </b-button>
-                </b-td>
-                <b-th>
-                    <b-button variant="link" @click="$bvModal.show('product-' + product.id)" class="cart-item__name">{{ product.name }}</b-button>
-                </b-th>
-                <b-td>
-                    <div class="cart-item__quantity">
-                        <b-button @click="removeProductFromCart(product)">&minus;</b-button>
-                        <span>{{ product.quantity }}</span>
-                        <b-button @click="addProductToCart(product)">&plus;</b-button>
-                    </div>
-                </b-td>
-                <b-td>
-                    <div class="cart-item__prices">
-                        <span class="cart-item__price" v-for="price in product.prices">
-                            {{ getCurrencyPrice(price.value, price.symbol)}}
-                        </span>
-                    </div>
-                </b-td>
-                <b-td>
-                    <div class="cart-item__totals">
-                        <span class="cart-item__price" v-for="price in product.totals">
-                            {{ getCurrencyPrice(price.value, price.symbol)}}
-                        </span>
-                    </div>
-                </b-td>
+    <b-table :fields="fields" :items="products" class="cart-table mb-5" responsive>
+        <template v-slot:cell(image)="data">
+            <b-button variant="link" @click="$bvModal.show('product-' + data.item.id)" class="cart-item__image">
+                <img :src="data.item.image" alt="Product Image">
+            </b-button>
+        </template>
 
-                <ProductModal v-bind:product="product"/>
-            </b-tr>
-            <b-tr class="cart-item">
-                <b-td></b-td>
-                <b-td>Delivery price</b-td>
-                <b-td></b-td>
-                <b-td></b-td>
-                <b-td>
-                    <div class="cart-item__prices">
-                        <span class="cart-item__price" v-for="delivery_price in delivery_prices">
-                            {{ getCurrencyPrice(delivery_price.value, delivery_price.symbol) }}
-                        </span>
-                    </div>
-                </b-td>
-            </b-tr>
-            <b-tr class="cart-item">
-                <b-td></b-td>
-                <b-td>Total</b-td>
-                <b-td></b-td>
-                <b-td></b-td>
-                <b-td>
-                    <div class="cart-item__prices">
-                        <span class="cart-item__price" v-for="total in totals">
-                            {{ getCurrencyPrice(total.value, total.symbol) }}
-                        </span>
-                    </div>
-                </b-td>
-            </b-tr>
-        </b-tbody>
-        <b-tfoot>
-            <b-tr>
-                <b-th></b-th>
-                <b-th>Name</b-th>
-                <b-th>Quantity</b-th>
-                <b-th>Price</b-th>
-                <b-th>Total</b-th>
-            </b-tr>
-        </b-tfoot>
-    </b-table-simple>
+        <template v-slot:cell(name)="data">
+            <b-button variant="link" @click="$bvModal.show('product-' + data.item.id)" class="cart-item__name">{{ data.item.name }}</b-button>
+        </template>
+
+        <template v-slot:cell(quantity)="data" class="cart-item__quantity">
+            <b-button @click="removeProductFromCart(data.item)">&minus;</b-button>
+            <span>{{ data.value }}</span>
+            <b-button @click="addProductToCart(data.item)">&plus;</b-button>
+        </template>
+
+        <template v-slot:cell(prices)="data" class="cart-item__prices">
+            <div class="cart-item__prices">
+                <span class="cart-item__price" v-for="price in data.value" :key="price.currency_id">
+                    {{ getCurrencyPrice(price.value, price.symbol) }}
+                </span>
+            </div>
+        </template>
+
+        <template v-slot:cell(totals)="data">
+            <div class="cart-item__totals">
+                <span class="cart-item__price" v-for="price in data.value" :key="price.currency_id">
+                    {{ getCurrencyPrice(price.value, price.symbol) }}
+                </span>
+            </div>
+        </template>
+    </b-table>
 </template>
 
 <script>
@@ -201,6 +153,33 @@
             return {
                 delivery_prices: [],
                 totals: [],
+                fields: [
+                    {
+                        key: 'image',
+                        label: '',
+                        sortable: false,
+                    },
+                    {
+                        key: 'name',
+                        label: 'Name',
+                        sortable: true,
+                    },
+                    {
+                        key: 'quantity',
+                        label: 'Quantity',
+                        sortable: true,
+                    },
+                    {
+                        key: 'prices',
+                        label: 'Price',
+                        sortable: true,
+                    },
+                    {
+                        key: 'totals',
+                        label: 'Total',
+                        sortable: true,
+                    },
+                ],
             }
         },
     }
